@@ -1,0 +1,20 @@
+package-as: Backpack
+
+externals:
+  libs/LibContainer:
+    url: git://github.com/p3lim-wow/LibContainer
+    tag: latest
+  libs/PixelFont:
+    url: git://github.com/p3lim-wow/PixelFont
+    tag: latest
+
+move-folders:
+  Backpack/libs/PixelFont: PixelFont
+
+manual-changelog:
+  filename: CHANGELOG.md
+  markup-type: markdown
+
+ignore:
+  - README.md
+  - utils

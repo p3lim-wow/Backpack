@@ -1,0 +1,11 @@
+## Interface: 80000
+## Author: p3lim
+## Version: @project-version@
+## Title: Backpack
+## Notes: Sleek category-based bags
+## RequiredDeps: PixelFont
+## SavedVariables: BackpackDB
+
+libs\LibContainer\embed.xml
+
+Backpack.lua
