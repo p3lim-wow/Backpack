@@ -112,7 +112,6 @@ local function styleSlot(Slot)
 	end
 end
 
-local i = 1
 local function styleContainer(Container)
 	Container:SetBackdrop(BACKDROP)
 	Container:SetBackdropColor(0.1, 0.1, 0.1, 0.5)
@@ -126,20 +125,19 @@ local function styleContainer(Container)
 	Container:SetMaxColumns(8)
 	Container:SetSpacing(2)
 	Container:SetPadding(10, 26)
+	Container:SetGrowDirection('LEFT', 'UP')
+	Container:SetRelPoint('BOTTOMRIGHT')
 
 	local Name = Container:CreateFontString('$parentName', 'ARTWORK', 'PixelFont')
 	Name:SetPoint('TOPLEFT', 11, -10)
 	Name:SetText(Container:GetLocalizedName())
 
-	-- TEMP
-	Container:ClearAllPoints()
-	Container:SetPoint('BOTTOMRIGHT', UIParent, -50, (50*i))
-	i=i+1
 end
 
-local Bags = LibContainer:New('bags', addOnName, UIParent)
+local Bags = LibContainer:New('bags', addOnName .. 'Bags', UIParent)
 Bags:On('PostCreateSlot', styleSlot)
 Bags:On('PostCreateContainer', styleContainer)
+Bags:SetPoint('BOTTOMRIGHT', -50, 50)
 
 do
 	-- Free slots "slot" on inventory
