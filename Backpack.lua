@@ -16,12 +16,9 @@ local function updateSlot(Slot)
 		return
 	end
 
-	local Icon = Slot.Icon
-	Icon:SetTexture(Slot:GetItemIcon())
-	Icon:SetDesaturated(Slot:IsItemLocked())
-
-	local itemCount = Slot:GetItemCount()
-	Slot.Count:SetText(itemCount > 1e3 and '*' or itemCount > 1 and itemCount or '')
+	SetItemButtonTexture(Slot, Slot:GetItemTexture())
+	SetItemButtonCount(self, self:GetItemCount())
+	SetItemButtonDesaturated(Slot, Slot:IsItemLocked())
 
 	local itemQuality = Slot:GetItemQuality()
 	local itemQualityColor = Slot:GetItemQualityColor().color
