@@ -21,11 +21,11 @@ local function updateSlot(Slot)
 	SetItemButtonDesaturated(Slot, Slot:IsItemLocked())
 
 	local itemQuality = Slot:GetItemQuality()
-	local itemQualityColor = Slot:GetItemQualityColor().color
+	local itemQualityColor = Slot:GetItemQualityColor()
 	local itemClass = Slot:GetItemClass()
 	if(itemQuality >= LE_ITEM_QUALITY_UNCOMMON and (itemClass == LE_ITEM_CLASS_WEAPON or itemClass == LE_ITEM_CLASS_ARMOR or (itemClass == LE_ITEM_CLASS_GEM and Slot:GetItemSubClass() == LE_ITEM_SUBCLASS_RELIC))) then
 		local ItemLevel = Slot.ItemLevel
-		ItemLevel:SetText(Slot:GetCurrentItemLevel())
+		ItemLevel:SetText(Slot:GetItemLevel())
 		ItemLevel:SetTextColor(itemQualityColor:GetRGB())
 		ItemLevel:Show()
 	else
