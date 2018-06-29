@@ -71,10 +71,10 @@ local function styleSlot(Slot)
 	local Count = Slot.Count
 	Count:ClearAllPoints()
 	Count:SetPoint('BOTTOMRIGHT', 0, 2)
-	Count:SetFontObject('PixelFont')
+	Count:SetFontObject('PixelFontNormal')
 	Count:Show()
 
-	local ItemLevel = Slot:CreateFontString('$parentItemLevel', 'ARTWORK', 'PixelFont')
+	local ItemLevel = Slot:CreateFontString('$parentItemLevel', 'ARTWORK', 'PixelFontNormal')
 	ItemLevel:SetPoint('BOTTOM', 2, 2)
 	ItemLevel:SetJustifyH('CENTER')
 	Slot.ItemLevel = ItemLevel
@@ -125,7 +125,7 @@ local function styleContainer(Container)
 	Container:SetGrowDirection('LEFT', 'UP')
 	Container:SetRelPoint('BOTTOMRIGHT')
 
-	local Name = Container:CreateFontString('$parentName', 'ARTWORK', 'PixelFont')
+	local Name = Container:CreateFontString('$parentName', 'ARTWORK', 'PixelFontNormal')
 	Name:SetPoint('TOPLEFT', 11, -10)
 	Name:SetText(Container:GetLocalizedName())
 
