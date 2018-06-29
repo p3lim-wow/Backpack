@@ -17,7 +17,7 @@ local function updateSlot(Slot)
 	end
 
 	SetItemButtonTexture(Slot, Slot:GetItemTexture())
-	SetItemButtonCount(self, self:GetItemCount())
+	SetItemButtonCount(Slot, Slot:GetItemCount())
 	SetItemButtonDesaturated(Slot, Slot:IsItemLocked())
 
 	local itemQuality = Slot:GetItemQuality()
