@@ -135,6 +135,12 @@ local function styleContainer(Container)
 
 	local category = Container:GetName()
 	if(category == 'Inventory') then
+		local Restack = Container:AddWidget('Restack')
+		Restack:SetPoint('TOPRIGHT', -8, -6)
+		Restack:SetSize(16, 16)
+		Restack:SetNormalTexture(ICONS)
+		Restack:GetNormalTexture():SetTexCoord(0.25, 0.5, 0, 0.25)
+
 		local Money = Container:AddWidget('Money')
 		Money:SetPoint('BOTTOMRIGHT', -8, 6)
 		Money.Label:SetFontObject('PixelFontNormal')
