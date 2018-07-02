@@ -12,10 +12,6 @@ local TEXTURE = [[Interface\ChatFrame\ChatFrameBackground]]
 local BACKDROP = {bgFile = TEXTURE, edgeFile = TEXTURE, edgeSize = 1}
 
 local function updateSlot(Slot)
-	if(Slot:IsItemEmpty()) then
-		return
-	end
-
 	SetItemButtonTexture(Slot, Slot:GetItemTexture())
 	SetItemButtonCount(Slot, Slot:GetItemCount())
 	SetItemButtonDesaturated(Slot, Slot:IsItemLocked())
