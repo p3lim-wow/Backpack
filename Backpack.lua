@@ -126,7 +126,6 @@ local function styleContainer(Container)
 
 	Container:SetMaxColumns(8)
 	Container:SetSpacing(2)
-	Container:SetPadding(10, 0, 26, 0)
 	Container:SetGrowDirection('LEFT', 'UP')
 	Container:SetRelPoint('BOTTOMRIGHT')
 
@@ -135,6 +134,26 @@ local function styleContainer(Container)
 	Name:SetText(Container:GetLocalizedName())
 
 	local category = Container:GetName()
+	if(category == 'Inventory') then
+		local Currencies = Container:AddWidget('Currencies')
+		Currencies:SetPoint('BOTTOMLEFT', 8, 6)
+		Currencies:SetSize(1, 1)
+
+		for index, Currency in next, Currencies.buttons do
+			Currency.Label:SetFontObject('PixelFontNormal')
+			Currency.Icon:SetTexCoord(0.08, 0.92, 0.08, 0.92)
+
+			if(index ~= 1) then
+				Currency:ClearAllPoints()
+				Currency:SetPoint('BOTTOMLEFT', Currencies.buttons[index - 1], 'BOTTOMRIGHT', 5, 0)
+			end
+		end
+
+		Container:SetPadding(10, 0, 26, 16)
+	else
+		Container:SetPadding(10, 0, 26, 0)
+	end
+
 	if(category == 'Junk') then
 		local AutoVendor = Container:AddWidget('AutoVendor')
 		AutoVendor:SetPoint('TOPRIGHT', -8, -6)
