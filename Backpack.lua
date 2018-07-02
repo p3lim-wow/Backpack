@@ -135,6 +135,10 @@ local function styleContainer(Container)
 
 	local category = Container:GetName()
 	if(category == 'Inventory') then
+		local Money = Container:AddWidget('Money')
+		Money:SetPoint('BOTTOMRIGHT', -8, 6)
+		Money.Label:SetFontObject('PixelFontNormal')
+
 		local Currencies = Container:AddWidget('Currencies')
 		Currencies:SetPoint('BOTTOMLEFT', 8, 6)
 		Currencies:SetSize(1, 1)
