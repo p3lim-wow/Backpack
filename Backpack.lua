@@ -8,8 +8,17 @@ local LE_ITEM_CLASS_ARMOR = LE_ITEM_CLASS_ARMOR or 4
 local LE_ITEM_CLASS_GEM = LE_ITEM_CLASS_GEM or 3
 local LE_ITEM_SUBCLASS_RELIC = 11
 
+local ICONS = [[Interface\AddOns\Backpack\assets\icons.tga]]
 local TEXTURE = [[Interface\ChatFrame\ChatFrameBackground]]
 local BACKDROP = {bgFile = TEXTURE, edgeFile = TEXTURE, edgeSize = 1}
+
+local function onAutoVendorClick(self)
+	if(LibContainer:GetVariable('autoSellJunk')) then
+		self:GetNormalTexture():SetVertexColor(1, 0.1, 0.1)
+	else
+		self:GetNormalTexture():SetVertexColor(0.3, 0.3, 0.3)
+	end
+end
 
 local function updateSlot(Slot)
 	SetItemButtonTexture(Slot, Slot:GetItemTexture())
@@ -125,6 +134,16 @@ local function styleContainer(Container)
 	Name:SetPoint('TOPLEFT', 11, -10)
 	Name:SetText(Container:GetLocalizedName())
 
+	local category = Container:GetName()
+	if(category == 'Junk') then
+		local AutoVendor = Container:AddWidget('AutoVendor')
+		AutoVendor:SetPoint('TOPRIGHT', -8, -6)
+		AutoVendor:SetSize(16, 16)
+		AutoVendor:SetNormalTexture(ICONS)
+		AutoVendor:GetNormalTexture():SetTexCoord(0, 0.25, 0, 0.25)
+		AutoVendor:HookScript('OnClick', onAutoVendorClick)
+		onAutoVendorClick(AutoVendor)
+	end
 end
 
 local Bags = LibContainer:New('bags', addOnName .. 'Bags', UIParent)
