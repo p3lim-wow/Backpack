@@ -126,7 +126,7 @@ local function styleContainer(Container)
 
 	Container:SetMaxColumns(8)
 	Container:SetSpacing(2)
-	Container:SetPadding(10, 26)
+	Container:SetPadding(10, 0, 26, 0)
 	Container:SetGrowDirection('LEFT', 'UP')
 	Container:SetRelPoint('BOTTOMRIGHT')
 
