@@ -135,45 +135,4 @@ local Bags = LibContainer:New('bags', addOnName .. 'Bags', UIParent)
 Bags:On('PostCreateSlot', styleSlot)
 Bags:On('PostCreateContainer', styleContainer)
 Bags:SetPoint('BOTTOMRIGHT', -50, 50)
-
-do
-	-- Free slots "slot" on inventory
-	local function OnDrop(Slot)
-		for bagID = BACKPACK_CONTAINER, NUM_BAG_SLOTS do
-			if(GetContainerNumFreeSlots(bagID) > 0) then
-				for slotIndex = 1, GetContainerNumSlots(bagID) do
-					if(not GetContainerItemInfo(bagID, slotIndex)) then
-						PickupContainerItem(bagID, slotIndex)
-						return
-					end
-				end
-			end
-		end
-	end
-
-	local function Update(self)
-		local Slot = self:GetBag(0):GetSlot(99)
-		Slot.Count:SetText(CalculateTotalNumberOfFreeBagSlots())
-	end
-
-	Bags:On('PostCreateBag', function(Bag)
-		if(Bag:GetID() == BACKPACK_CONTAINER) then
-			local Slot = Bag:CreateSlot(99)
-			Slot:SetScript('OnMouseUp', OnDrop)
-			Slot:SetScript('OnReceiveDrag', OnDrop)
-			Slot:Show()
-			Slot.Hide = nop
-
-			-- fake info so it gets sorted last
-			Slot.itemCount = 0
-			Slot.itemQuality = 0
-			Slot.itemID = 0
-			Slot.itemLevel = 0
-
-			Bags:GetContainer(1):AddSlot(Slot)
-			Update(Bags)
-		end
-	end)
-
-	Bags:RegisterEvent('BAG_UPDATE_DELAYED', Update)
-end
+Bags:AddFreeSlot()
