@@ -172,6 +172,12 @@ local function styleContainer(Container)
 		AutoVendor:GetNormalTexture():SetTexCoord(0, 0.25, 0, 0.25)
 		AutoVendor:HookScript('OnClick', onAutoVendorClick)
 		onAutoVendorClick(AutoVendor)
+	elseif(category == 'New') then
+		local MarkKnown = Container:AddWidget('MarkKnown')
+		MarkKnown:SetPoint('TOPRIGHT', -8, -6)
+		MarkKnown:SetSize(16, 16)
+		MarkKnown:SetNormalTexture(ICONS)
+		MarkKnown:GetNormalTexture():SetTexCoord(0.75, 1, 0, 0.25)
 	end
 end
 
@@ -180,4 +186,3 @@ Bags:On('PostCreateSlot', styleSlot)
 Bags:On('PostCreateContainer', styleContainer)
 Bags:SetPoint('BOTTOMRIGHT', -50, 50)
 Bags:AddFreeSlot()
-Bags:DisableCategories('New')
