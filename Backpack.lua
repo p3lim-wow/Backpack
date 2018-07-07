@@ -115,10 +115,13 @@ local function styleSlot(Slot)
 end
 
 local function styleContainer(Container)
+	local isBank = Container:GetParent():GetType() == 'bank'
+
 	Container:SetBackdrop(BACKDROP)
 	Container:SetBackdropColor(0.1, 0.1, 0.1, 0.5)
 	Container:SetBackdropBorderColor(0, 0, 0)
 
+	Container:SetSlotSize(32, 32)
 	Container:SetSlotSpacing(4)
 	Container:SetSlotPadding(10)
 	Container:SetSlotRelPoint('TOPLEFT')
@@ -126,20 +129,21 @@ local function styleContainer(Container)
 
 	Container:SetMaxColumns(8)
 	Container:SetSpacing(2)
-	Container:SetGrowDirection('LEFT', 'UP')
-	Container:SetRelPoint('BOTTOMRIGHT')
+
+	if(isBank) then
+		Container:SetRelPoint('TOPLEFT')
+		Container:SetGrowDirection('RIGHT', 'DOWN')
+	else
+		Container:SetRelPoint('BOTTOMRIGHT')
+		Container:SetGrowDirection('LEFT', 'UP')
+	end
 
 	local Name = Container:CreateFontString('$parentName', 'ARTWORK', 'PixelFontNormal')
 	Name:SetPoint('TOPLEFT', 11, -10)
 	Name:SetText(Container:GetLocalizedName())
 
 	local category = Container:GetName()
-	if(category == 'Inventory') then
-		local Restack = Container:AddWidget('Restack')
-		Restack:SetPoint('TOPRIGHT', -8, -6)
-		Restack:SetSize(16, 16)
-		Restack:SetNormalTexture(ICONS)
-		Restack:GetNormalTexture():SetTexCoord(0.25, 0.5, 0, 0.25)
+	if(category == 'Inventory' and not isBank) then
 
 		local Money = Container:AddWidget('Money')
 		Money:SetPoint('BOTTOMRIGHT', -8, 6)
@@ -164,7 +168,7 @@ local function styleContainer(Container)
 		Container:SetPadding(10, 0, 26, 0)
 	end
 
-	if(category == 'Junk') then
+	if(category == 'Junk' and not isBank) then
 		local AutoVendor = Container:AddWidget('AutoVendor')
 		AutoVendor:SetPoint('TOPRIGHT', -8, -6)
 		AutoVendor:SetSize(16, 16)
@@ -179,6 +183,14 @@ local function styleContainer(Container)
 		MarkKnown:SetNormalTexture(ICONS)
 		MarkKnown:GetNormalTexture():SetTexCoord(0.75, 1, 0, 0.25)
 	end
+
+	if(category == 'Inventory') then
+		local Restack = Container:AddWidget('Restack')
+		Restack:SetPoint('TOPRIGHT', -8, -6)
+		Restack:SetSize(16, 16)
+		Restack:SetNormalTexture(ICONS)
+		Restack:GetNormalTexture():SetTexCoord(0.25, 0.5, 0, 0.25)
+	end
 end
 
 local Bags = LibContainer:New('bags', addOnName .. 'Bags', UIParent)
@@ -186,3 +198,9 @@ Bags:On('PostCreateSlot', styleSlot)
 Bags:On('PostCreateContainer', styleContainer)
 Bags:SetPoint('BOTTOMRIGHT', -50, 50)
 Bags:AddFreeSlot()
+
+local Bank = LibContainer:New('bank', addOnName .. 'Bank', UIParent)
+Bank:On('PostCreateSlot', styleSlot)
+Bank:On('PostCreateContainer', styleContainer)
+Bank:SetPoint('TOPLEFT', 50, -50)
+Bank:AddFreeSlot()
