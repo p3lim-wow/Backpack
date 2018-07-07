@@ -20,6 +20,14 @@ local function onAutoVendorClick(self)
 	end
 end
 
+local function onAutoDepositClick(self)
+	if(LibContainer:GetVariable('autoDeposit')) then
+		self:GetNormalTexture():SetVertexColor(0, 0.6, 1)
+	else
+		self:GetNormalTexture():SetVertexColor(0.3, 0.3, 0.3)
+	end
+end
+
 local function updateSlot(Slot)
 	SetItemButtonTexture(Slot, Slot:GetItemTexture())
 	SetItemButtonCount(Slot, Slot:GetItemCount())
@@ -182,9 +190,23 @@ local function styleContainer(Container)
 		MarkKnown:SetSize(16, 16)
 		MarkKnown:SetNormalTexture(ICONS)
 		MarkKnown:GetNormalTexture():SetTexCoord(0.75, 1, 0, 0.25)
+	elseif(category == 'ReagentBank') then
+		local Deposit = Container:AddWidget('Deposit')
+		Deposit:SetPoint('TOPRIGHT', -28, -6)
+		Deposit:SetSize(16, 16)
+		Deposit:SetNormalTexture(ICONS)
+		Deposit:GetNormalTexture():SetTexCoord(0.5, 0.75, 0, 0.25)
+
+		local AutoDeposit = Container:AddWidget('AutoDeposit')
+		AutoDeposit:SetPoint('TOPRIGHT', -48, -6)
+		AutoDeposit:SetSize(16, 16)
+		AutoDeposit:SetNormalTexture(ICONS)
+		AutoDeposit:GetNormalTexture():SetTexCoord(0.5, 0.75, 0, 0.25)
+		AutoDeposit:HookScript('OnClick', onAutoDepositClick)
+		onAutoDepositClick(AutoDeposit)
 	end
 
-	if(category == 'Inventory') then
+	if(category == 'Inventory' or category == 'ReagentBank') then
 		local Restack = Container:AddWidget('Restack')
 		Restack:SetPoint('TOPRIGHT', -8, -6)
 		Restack:SetSize(16, 16)
