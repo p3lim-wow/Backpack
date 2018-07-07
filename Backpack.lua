@@ -220,6 +220,7 @@ Bags:On('PostCreateSlot', styleSlot)
 Bags:On('PostCreateContainer', styleContainer)
 Bags:SetPoint('BOTTOMRIGHT', -50, 50)
 Bags:AddFreeSlot()
+Bags:OverrideToggles()
 
 local Bank = LibContainer:New('bank', addOnName .. 'Bank', UIParent)
 Bank:On('PostCreateSlot', styleSlot)
