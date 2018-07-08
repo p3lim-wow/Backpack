@@ -28,6 +28,41 @@ local function onAutoDepositClick(self)
 	end
 end
 
+local function OnSearchClick(self)
+	self:SetAlpha(1)
+	self:SetFrameLevel(self:GetFrameLevel() + 1)
+	self.Icon:Hide()
+
+	local Search = self.Search
+	Search:Show()
+	Search:SetFocus()
+end
+
+local function OnSearchEnter(self)
+	if(not self.Search:IsShown()) then
+		self:SetAlpha(0.4)
+	end
+end
+
+local function OnSearchLeave(self)
+	if(not self.Search:IsShown()) then
+		self:SetAlpha(0)
+	end
+end
+
+local function OnSearchEscape(self)
+	local SearchZone = self.SearchZone
+	if(not MouseIsOver(SearchZone)) then
+		SearchZone:SetAlpha(0)
+	else
+		SearchZone:SetAlpha(0.4)
+	end
+
+	SearchZone:SetFrameLevel(SearchZone:GetFrameLevel() - 1)
+	SearchZone.Icon:Show()
+	self:Hide()
+end
+
 local function updateSlot(Slot)
 	SetItemButtonTexture(Slot, Slot:GetItemTexture())
 	SetItemButtonCount(Slot, Slot:GetItemCount())
@@ -152,6 +187,42 @@ local function styleContainer(Container)
 
 	local category = Container:GetName()
 	if(category == 'Inventory' and not isBank) then
+		local SearchZone = CreateFrame('Button', nil, Container)
+		SearchZone:SetPoint('BOTTOMLEFT')
+		SearchZone:SetPoint('BOTTOMRIGHT')
+		SearchZone:SetHeight(20)
+		SearchZone:SetAlpha(0)
+		SearchZone:SetBackdrop(BACKDROP)
+		SearchZone:SetBackdropColor(0, 0, 0, 0.9)
+		SearchZone:SetBackdropBorderColor(0, 0, 0)
+		SearchZone:RegisterForClicks('AnyUp')
+		SearchZone:SetScript('OnClick', OnSearchClick)
+		SearchZone:SetScript('OnEnter', OnSearchEnter)
+		SearchZone:SetScript('OnLeave', OnSearchLeave)
+
+		local SearchZoneIcon = SearchZone:CreateTexture('$parentIcon', 'OVERLAY')
+		SearchZoneIcon:SetPoint('CENTER')
+		SearchZoneIcon:SetSize(16, 16)
+		SearchZoneIcon:SetTexture(ICONS)
+		SearchZoneIcon:SetTexCoord(0.75, 1, 0.75, 1)
+		SearchZone.Icon = SearchZoneIcon
+
+		local Search = Container:AddWidget('Search')
+		Search:SetPoint('TOPLEFT', SearchZone, 25, 0)
+		Search:SetPoint('BOTTOMRIGHT', SearchZone, -5, 0)
+		Search:SetFontObject('PixelFontNormal')
+		Search:SetAutoFocus(true)
+		Search:SetFrameLevel(Search:GetFrameLevel() + 2)
+		Search:HookScript('OnEscapePressed', OnSearchEscape)
+		Search:Hide()
+		Search.SearchZone = SearchZone
+		SearchZone.Search = Search
+
+		local SearchIcon = Search:CreateTexture('$parentIcon', 'OVERLAY')
+		SearchIcon:SetPoint('RIGHT', Search, 'LEFT', -4, 0)
+		SearchIcon:SetSize(16, 16)
+		SearchIcon:SetTexture(ICONS)
+		SearchIcon:SetTexCoord(0.75, 1, 0.75, 1)
 
 		local Money = Container:AddWidget('Money')
 		Money:SetPoint('BOTTOMRIGHT', -8, 6)
