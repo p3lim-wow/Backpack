@@ -12,6 +12,21 @@ local ICONS = [[Interface\AddOns\Backpack\assets\icons.tga]]
 local TEXTURE = [[Interface\ChatFrame\ChatFrameBackground]]
 local BACKDROP = {bgFile = TEXTURE, edgeFile = TEXTURE, edgeSize = 1}
 
+local LDD = LibStub('LibDropDown')
+LDD:RegisterStyle(addOnName, {
+	gap = 18,
+	padding = 8,
+	spacing = 0,
+	backdrop = BACKDROP,
+	backdropColor = CreateColor(0, 0, 0, 0.9),
+	backdropBorderColor = CreateColor(0, 0, 0),
+	normalFont = 'PixelFontNormal',
+	disabledFont = 'PixelFontDisabled',
+	titleFont = 'PixelFontTitle'
+})
+
+local Dropdown -- gets assigned at the end, needs a parent
+
 -- widget hooks
 local function onAutoVendorClick(self)
 	if(LibContainer:GetVariable('autoSellJunk')) then
@@ -111,6 +126,58 @@ local function onReagentBankPurchaseButtonClick()
 	StaticPopup_Show('CONFIRM_BUY_REAGENTBANK_TAB')
 end
 
+local onSlotClick
+do
+	local currentSlot
+	local function onSlotLineClick(_, _, categoryIndex)
+		if(categoryIndex) then
+			if(categoryIndex == true) then
+				local category = currentSlot:GuessCategory('New')
+				categoryIndex = category.index
+			end
+
+			currentSlot:AssignCategory(categoryIndex)
+		else
+			currentSlot:ClearCategory()
+		end
+
+		currentSlot:GetParent():GetParent():UpdateContainers()
+	end
+
+	function onSlotClick(Slot, button)
+		if(button ~= 'RightButton' or not IsControlKeyDown()) then
+			return
+		end
+
+		if(not Dropdown.initialized) then
+			local info = {func = onSlotLineClick}
+			info.text = 'Mark as new'
+			Dropdown:AddLine(info)
+
+			info.text = 'Mark as known'
+			info.args = {true}
+			Dropdown:AddLine(info)
+			Dropdown:AddLine({isSpacer = true})
+
+			for categoryIndex, data in next, Slot.parent:GetCategories() do
+				if(categoryIndex ~= 2 and categoryIndex ~= 997 and categoryIndex ~= 999) then
+					-- ignoring Invalid, New and ReagentBank categories
+					info.text = data.localizedName
+					info.args = {categoryIndex}
+					Dropdown:AddLine(info)
+				end
+			end
+
+			Dropdown.initialized = true
+		end
+
+		currentSlot = Slot
+		Dropdown:SetAnchor('TOPRIGHT', Slot)
+		Dropdown:SetParent(Slot)
+		Dropdown:Toggle()
+	end
+end
+
 -- callbacks
 local function containerUpdateSize(Container)
 	local Parent = Container:GetParent()
@@ -174,6 +241,7 @@ local function styleSlot(Slot)
 	Slot:SetBackdrop(BACKDROP)
 	Slot:SetBackdropColor(0.1, 0.1, 0.1, 0.5)
 	Slot:SetBackdropBorderColor(0, 0, 0)
+	Slot:HookScript('OnClick', onSlotClick)
 	Slot.Update = slotUpdate
 	Slot:On('PostUpdateVisibility', slotVisibility)
 
@@ -404,3 +472,6 @@ Bank:On('PostCreateBagSlot', styleBagSlot)
 Bank:SetPoint('TOPLEFT', 50, -50)
 Bank:AddFreeSlot()
 Bank:AddBagSlots()
+
+Dropdown = LDD:NewMenu(Bags)
+Dropdown:SetStyle(addOnName)

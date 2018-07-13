@@ -6,6 +6,8 @@
 ## RequiredDeps: PixelFont
 ## SavedVariables: BackpackDB
 
+libs\LibStub\LibStub.lua
+libs\LibDropDown\embed.xml
 libs\LibContainer\embed.xml
 
 Backpack.lua
