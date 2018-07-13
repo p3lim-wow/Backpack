@@ -12,6 +12,7 @@ local ICONS = [[Interface\AddOns\Backpack\assets\icons.tga]]
 local TEXTURE = [[Interface\ChatFrame\ChatFrameBackground]]
 local BACKDROP = {bgFile = TEXTURE, edgeFile = TEXTURE, edgeSize = 1}
 
+-- widget hooks
 local function onAutoVendorClick(self)
 	if(LibContainer:GetVariable('autoSellJunk')) then
 		self:GetNormalTexture():SetVertexColor(1, 0.1, 0.1)
@@ -63,6 +64,7 @@ local function onSearchEscape(self)
 	self:Hide()
 end
 
+-- callbacks
 local function slotUpdate(Slot)
 	SetItemButtonTexture(Slot, Slot:GetItemTexture())
 	SetItemButtonCount(Slot, Slot:GetItemCount())
