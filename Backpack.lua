@@ -28,7 +28,7 @@ local function onAutoDepositClick(self)
 	end
 end
 
-local function OnSearchClick(self)
+local function onSearchClick(self)
 	self:SetAlpha(1)
 	self:SetFrameLevel(self:GetFrameLevel() + 1)
 	self.Icon:Hide()
@@ -38,19 +38,19 @@ local function OnSearchClick(self)
 	Search:SetFocus()
 end
 
-local function OnSearchEnter(self)
+local function onSearchEnter(self)
 	if(not self.Search:IsShown()) then
 		self:SetAlpha(0.4)
 	end
 end
 
-local function OnSearchLeave(self)
+local function onSearchLeave(self)
 	if(not self.Search:IsShown()) then
 		self:SetAlpha(0)
 	end
 end
 
-local function OnSearchEscape(self)
+local function onSearchEscape(self)
 	local SearchZone = self.SearchZone
 	if(not MouseIsOver(SearchZone)) then
 		SearchZone:SetAlpha(0)
@@ -63,7 +63,7 @@ local function OnSearchEscape(self)
 	self:Hide()
 end
 
-local function updateSlot(Slot)
+local function slotUpdate(Slot)
 	SetItemButtonTexture(Slot, Slot:GetItemTexture())
 	SetItemButtonCount(Slot, Slot:GetItemCount())
 	SetItemButtonDesaturated(Slot, Slot:IsItemLocked())
@@ -89,7 +89,7 @@ local function updateSlot(Slot)
 	end
 end
 
-local function clearSlot(Slot)
+local function slotVisibility(Slot)
 	if(Slot:IsItemEmpty()) then
 		local Icon = Slot.Icon
 		Icon:SetTexture(nil)
@@ -106,9 +106,8 @@ local function styleSlot(Slot)
 	Slot:SetBackdrop(BACKDROP)
 	Slot:SetBackdropColor(0.1, 0.1, 0.1, 0.5)
 	Slot:SetBackdropBorderColor(0, 0, 0)
-	Slot:Show()
-	Slot.Update = updateSlot
-	Slot:On('PostUpdateVisibility', clearSlot)
+	Slot.Update = slotUpdate
+	Slot:On('PostUpdateVisibility', slotVisibility)
 
 	local Icon = Slot.Icon
 	Icon:ClearAllPoints()
@@ -196,9 +195,9 @@ local function styleContainer(Container)
 		SearchZone:SetBackdropColor(0, 0, 0, 0.9)
 		SearchZone:SetBackdropBorderColor(0, 0, 0)
 		SearchZone:RegisterForClicks('AnyUp')
-		SearchZone:SetScript('OnClick', OnSearchClick)
-		SearchZone:SetScript('OnEnter', OnSearchEnter)
-		SearchZone:SetScript('OnLeave', OnSearchLeave)
+		SearchZone:SetScript('OnClick', onSearchClick)
+		SearchZone:SetScript('OnEnter', onSearchEnter)
+		SearchZone:SetScript('OnLeave', onSearchLeave)
 
 		local SearchZoneIcon = SearchZone:CreateTexture('$parentIcon', 'OVERLAY')
 		SearchZoneIcon:SetPoint('CENTER')
@@ -213,7 +212,7 @@ local function styleContainer(Container)
 		Search:SetFontObject('PixelFontNormal')
 		Search:SetAutoFocus(true)
 		Search:SetFrameLevel(Search:GetFrameLevel() + 2)
-		Search:HookScript('OnEscapePressed', OnSearchEscape)
+		Search:HookScript('OnEscapePressed', onSearchEscape)
 		Search:Hide()
 		Search.SearchZone = SearchZone
 		SearchZone.Search = Search
