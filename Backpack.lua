@@ -106,12 +106,28 @@ local function onBagSlotLeave(self)
 	end
 end
 
+local function onReagentBankPurchaseButtonClick()
+	PlaySound(SOUNDKIT.IG_MAINMENU_OPTION)
+	StaticPopup_Show('CONFIRM_BUY_REAGENTBANK_TAB')
+end
+
 -- callbacks
 local function containerUpdateSize(Container)
 	local Parent = Container:GetParent()
-	if(Parent._bagSlotsShown and Container:GetID() == 1) then
+	local categoryIndex = Container:GetID()
+	if(categoryIndex == 1 and Parent._bagSlotsShown) then
+		-- resize to make space for bagslots
 		local width, height = Container:GetSize()
 		Container:SetSize(width, height + 40)
+	elseif(categoryIndex == 999) then
+		-- make space for and/or show/hide reagent purchase button
+		if(not IsReagentBankUnlocked()) then
+			local width, height = Container:GetSize()
+			Container:SetSize(width, height + 40)
+			Container.PurchaseReagentBankButton:Show()
+		else
+			Container.PurchaseReagentBankButton:Hide()
+		end
 	end
 end
 
@@ -339,6 +355,17 @@ local function styleContainer(Container)
 		AutoDeposit:GetNormalTexture():SetTexCoord(0.5, 0.75, 0, 0.25)
 		AutoDeposit:HookScript('OnClick', onAutoDepositClick)
 		onAutoDepositClick(AutoDeposit)
+
+		local PurchaseButton = CreateFrame('Button', nil, Container)
+		PurchaseButton:SetPoint('TOPLEFT', 50, -30)
+		PurchaseButton:SetPoint('BOTTOMRIGHT', -50, 20)
+		PurchaseButton:SetBackdrop(BACKDROP)
+		PurchaseButton:SetBackdropColor(0.1, 0.1, 0.1, 0.5)
+		PurchaseButton:SetBackdropBorderColor(0, 0, 0)
+		PurchaseButton:SetNormalFontObject('PixelFontNormal')
+		PurchaseButton:SetText(BANKSLOTPURCHASE)
+		PurchaseButton:SetScript('OnClick', onReagentBankPurchaseButtonClick)
+		Container.PurchaseReagentBankButton = PurchaseButton
 	end
 
 	if(category == 'Inventory') then
@@ -348,8 +375,6 @@ local function styleContainer(Container)
 		Bags:SetNormalTexture(ICONS)
 		Bags:GetNormalTexture():SetTexCoord(0, 0.25, 0.25, 0.5)
 		Bags:HookScript('OnClick', onBagSlotsToggle)
-
-		Container:On('PostUpdateSize', containerUpdateSize)
 	end
 
 	if(category == 'Inventory' or category == 'ReagentBank') then
@@ -358,6 +383,8 @@ local function styleContainer(Container)
 		Restack:SetSize(16, 16)
 		Restack:SetNormalTexture(ICONS)
 		Restack:GetNormalTexture():SetTexCoord(0.25, 0.5, 0, 0.25)
+
+		Container:On('PostUpdateSize', containerUpdateSize)
 	end
 end
 
