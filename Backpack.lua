@@ -64,7 +64,57 @@ local function onSearchEscape(self)
 	self:Hide()
 end
 
+local function onBagSlotsToggle(self)
+	local Parent = self:GetParent():GetParent()
+	if(Parent.bagSlots) then
+		local isShown
+		for _, Slot in next, Parent.bagSlots do
+			isShown = Slot:IsShown()
+			break
+		end
+
+		Parent._bagSlotsShown = isShown
+		Parent:GetContainer(1):UpdateSize()
+	end
+end
+
+local function onBagSlotEnter(self)
+	-- highlight the slots within the bag when mousing over
+	local Parent = self:GetParent()
+	for bagID, Bag in next, Parent:GetBags() do
+		local currentBag = bagID == self:GetID()
+		for _, Slot in next, Bag:GetSlots() do
+			if(Slot:IsShown()) then
+				if(currentBag) then
+					Slot:SetAlpha(1)
+				else
+					Slot:SetAlpha(0.1)
+				end
+			end
+		end
+	end
+end
+
+local function onBagSlotLeave(self)
+	local Parent = self:GetParent()
+	for bagID, Bag in next, Parent:GetBags() do
+		for _, Slot in next, Bag:GetSlots() do
+			if(Slot:IsShown()) then
+				Slot:SetAlpha(1)
+			end
+		end
+	end
+end
+
 -- callbacks
+local function containerUpdateSize(Container)
+	local Parent = Container:GetParent()
+	if(Parent._bagSlotsShown and Container:GetID() == 1) then
+		local width, height = Container:GetSize()
+		Container:SetSize(width, height + 40)
+	end
+end
+
 local function slotUpdate(Slot)
 	SetItemButtonTexture(Slot, Slot:GetItemTexture())
 	SetItemButtonCount(Slot, Slot:GetItemCount())
@@ -156,6 +206,19 @@ local function styleSlot(Slot)
 	if(BattlePay) then
 		BattlePay:Hide()
 	end
+end
+
+local function styleBagSlot(Slot)
+	styleSlot(Slot)
+
+	local Parent = Slot:GetParent()
+	Slot:HookScript('OnEnter', onBagSlotEnter)
+	Slot:HookScript('OnLeave', onBagSlotLeave)
+
+	local isBank = Parent:GetType() == 'bank'
+	local yOffset = isBank and 10 or 20
+	local numBags = isBank and NUM_BANKBAGSLOTS or NUM_BAG_SLOTS
+	Slot:SetPoint('BOTTOMRIGHT', Parent:GetContainer(1), -(((numBags - Slot.index) * (Slot:GetWidth() + 4)) + 10), yOffset)
 end
 
 local function styleContainer(Container)
@@ -278,6 +341,17 @@ local function styleContainer(Container)
 		onAutoDepositClick(AutoDeposit)
 	end
 
+	if(category == 'Inventory') then
+		local Bags = Container:AddWidget('Bags')
+		Bags:SetPoint('TOPRIGHT', -28, -6)
+		Bags:SetSize(16, 16)
+		Bags:SetNormalTexture(ICONS)
+		Bags:GetNormalTexture():SetTexCoord(0, 0.25, 0.25, 0.5)
+		Bags:HookScript('OnClick', onBagSlotsToggle)
+
+		Container:On('PostUpdateSize', containerUpdateSize)
+	end
+
 	if(category == 'Inventory' or category == 'ReagentBank') then
 		local Restack = Container:AddWidget('Restack')
 		Restack:SetPoint('TOPRIGHT', -8, -6)
@@ -290,12 +364,16 @@ end
 local Bags = LibContainer:New('bags', addOnName .. 'Bags', UIParent)
 Bags:On('PostCreateSlot', styleSlot)
 Bags:On('PostCreateContainer', styleContainer)
+Bags:On('PostCreateBagSlot', styleBagSlot)
 Bags:SetPoint('BOTTOMRIGHT', -50, 50)
 Bags:AddFreeSlot()
+Bags:AddBagSlots()
 Bags:OverrideToggles()
 
 local Bank = LibContainer:New('bank', addOnName .. 'Bank', UIParent)
 Bank:On('PostCreateSlot', styleSlot)
 Bank:On('PostCreateContainer', styleContainer)
+Bank:On('PostCreateBagSlot', styleBagSlot)
 Bank:SetPoint('TOPLEFT', 50, -50)
 Bank:AddFreeSlot()
+Bank:AddBagSlots()
